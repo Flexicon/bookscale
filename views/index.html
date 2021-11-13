@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{template "head" .}}
+    <title>Bookscale</title>
+  </head>
+  <body>
+    {{template "header" .}}
+
+    <main>
+      <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">Compare Book Prices</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4">
+            Quickly find and compare all available prices for any book in Poland. Have confidence that you're buying
+            your book at the best price available. Don't get scammed on pricing ever again!
+          </p>
+
+          <form action="/search" method="get">
+            <div class="input-group mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="term"
+                name="term"
+                aria-describedby="termHelp"
+                placeholder="e.g. Kasacja Remigiusz Mróz"
+              />
+              <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <div id="termHelp" class="form-text">Type in the name of the book you're looking for.</div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
