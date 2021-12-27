@@ -1,1 +1,7 @@
+# IDEs
+.vscode
+.idea
+
+# Dev files
 tmp/
+.air.toml
