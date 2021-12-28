@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//go:embed *.html
+//go:embed *.html *.gohtml
 var embeddedTemplates embed.FS
 
 type renderer struct {
