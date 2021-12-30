@@ -1,7 +1,9 @@
 package main
 
 import (
+	"github.com/spf13/viper"
 	"log"
+	"strings"
 
 	"github.com/flexicon/bookscale/views"
 	"github.com/labstack/echo/v4"
@@ -15,8 +17,12 @@ func main() {
 }
 
 func run() error {
+	if err := ViperInit(); err != nil {
+		return err
+	}
+
 	e := echo.New()
-	e.Debug = true // TODO: move this to an env var
+	e.Debug = viper.GetBool("debug")
 
 	e.Use(middleware.Secure())
 	e.Use(middleware.Recover())
@@ -30,4 +36,19 @@ func run() error {
 	e.GET("/search", SearchHandler)
 
 	return e.Start(":9000")
+}
+
+// ViperInit loads environment variables and sets up needed defaults.
+func ViperInit() error {
+	// Prepare for Environment variables
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+
+	// Defaults
+	viper.SetDefault("port", 80)
+	viper.SetDefault("debug", false)
+	viper.SetDefault("allegro.client_id", "")
+	viper.SetDefault("allegro.client_secret", "")
+
+	return nil
 }
