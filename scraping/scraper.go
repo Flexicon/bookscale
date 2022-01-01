@@ -2,14 +2,18 @@ package scraping
 
 // PriceScrapers map for all available price scrapers.
 var PriceScrapers = map[string]PriceScraper{
-	"Allegro": NewAllegroScraper(),
+	//"allegro": NewAllegroScraper(),
+	"swiat_ksiazki": NewSwiatKsiazkiScraper(),
 }
 
-type PriceScrape struct {
+// BookPrice represents a scraped price item.
+type BookPrice struct {
+	Title string
 	Price string
 	URL   string
 }
 
+// PriceScraper allows scraping prices by query.
 type PriceScraper interface {
-	Price(query string) (*PriceScrape, error)
+	Price(query string) (*BookPrice, error)
 }

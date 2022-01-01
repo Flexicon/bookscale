@@ -13,7 +13,7 @@ func IndexHandler(c echo.Context) error {
 
 type SearchResults struct {
 	SearchTerm string
-	Prices     map[string]*scraping.PriceScrape
+	Prices     map[string]*scraping.BookPrice
 	Errors     []error
 
 	mu sync.Mutex
@@ -23,12 +23,12 @@ type SearchResults struct {
 func NewSearchResults(searchTerm string) *SearchResults {
 	return &SearchResults{
 		SearchTerm: searchTerm,
-		Prices:     make(map[string]*scraping.PriceScrape),
+		Prices:     make(map[string]*scraping.BookPrice),
 		Errors:     make([]error, 0),
 	}
 }
 
-func (r *SearchResults) AddPrice(source string, price *scraping.PriceScrape) {
+func (r *SearchResults) AddPrice(source string, price *scraping.BookPrice) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

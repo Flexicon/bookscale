@@ -15,9 +15,19 @@
 
           <ul>
             {{range $source, $price := .Prices}}
-              <li>{{$source}} - {{$price.Price}}</li>
+              <li>{{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}</li>
             {{end}}
           </ul>
+
+          {{if .Errors}}
+            <p>Errors</p>
+
+            <ul>
+              {{range $err := .Errors}}
+                <li>{{$err}}</li>
+              {{end}}
+            </ul>
+          {{end}}
         </div>
       </main>
     </body>
