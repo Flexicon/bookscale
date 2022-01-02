@@ -40,6 +40,9 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		if price == "" {
 			price = e.DOM.Find(".price-box").Text()
 		}
+		if price == "" {
+			price = "N/A"
+		}
 
 		result = &BookPrice{
 			Title: linkEl.Text(),

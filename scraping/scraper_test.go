@@ -11,6 +11,7 @@ func TestParsePrice(t *testing.T) {
 		"with whitespace":  {input: " 32,50  zł  ", want: "32,50 zł"},
 		"without currency": {input: " 42,23", want: "42,23 zł"},
 		"empik example":    {input: "\n21,99 zł\n34,90 zł\n", want: "21,99 zł"},
+		"empty":            {input: "", want: ""},
 	}
 
 	for name, tc := range tests {

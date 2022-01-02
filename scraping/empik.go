@@ -34,7 +34,11 @@ func (s *EmpikScraper) Price(query string) (*BookPrice, error) {
 
 	c.OnHTML(".search-list-item:first-of-type", func(e *colly.HTMLElement) {
 		linkEl := e.DOM.Find(".name .product-title > a")
+
 		price := parsePrice(e.DOM.Find(".price").Text())
+		if price == "" {
+			price = "N/A"
+		}
 
 		link, _ := linkEl.Attr("href")
 		// Handle relative URLs by attaching the Empik domain onto the link.

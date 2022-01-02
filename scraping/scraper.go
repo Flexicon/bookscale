@@ -35,6 +35,9 @@ type PriceScraper interface {
 func parsePrice(input string) string {
 	input = strings.TrimSpace(input)
 	parts := strings.Fields(input)
+	if len(parts) == 0 {
+		return ""
+	}
 
 	return fmt.Sprintf("%s zł", strings.TrimSpace(parts[0]))
 }
