@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/flexicon/bookscale/scraping"
@@ -9,43 +10,16 @@ import (
 )
 
 func IndexHandler(c echo.Context) error {
-	return c.Render(http.StatusOK, "index", nil)
-}
-
-type SearchResults struct {
-	SearchTerm string
-	Prices     map[string]*scraping.BookPrice
-	Errors     []error
-
-	mu sync.Mutex
-}
-
-// NewSearchResults constructor.
-func NewSearchResults(searchTerm string) *SearchResults {
-	return &SearchResults{
-		SearchTerm: searchTerm,
-		Prices:     make(map[string]*scraping.BookPrice),
-		Errors:     make([]error, 0),
-	}
-}
-
-func (r *SearchResults) AddPrice(source string, price *scraping.BookPrice) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	r.Prices[source] = price
-}
-
-func (r *SearchResults) AddError(err error) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	r.Errors = append(r.Errors, err)
+	return c.Render(http.StatusOK, "index", IndexTplArgs{})
 }
 
 func SearchHandler(c echo.Context) error {
-	searchTerm := c.QueryParam("term")
-	results := NewSearchResults(searchTerm)
+	query := strings.TrimSpace(c.QueryParam("q"))
+	results := NewSearchResults(query)
+
+	if query == "" {
+		return c.Redirect(http.StatusFound, "/")
+	}
 
 	wg := sync.WaitGroup{}
 	for source, scraper := range scraping.PriceScrapers {
@@ -54,9 +28,9 @@ func SearchHandler(c echo.Context) error {
 		go func(source string, scraper scraping.PriceScraper) {
 			defer wg.Done()
 
-			price, err := scraper.Price(searchTerm)
+			price, err := scraper.Price(query)
 			if err != nil {
-				results.AddError(err)
+				results.AddError(source, err)
 				return
 			}
 			results.AddPrice(source, price)
@@ -65,6 +39,42 @@ func SearchHandler(c echo.Context) error {
 
 	wg.Wait()
 
-	// TODO: reuse the index template for displaying search results along with the search form maybe? For easier navigation.
-	return c.Render(http.StatusOK, "search", results)
+	return c.Render(http.StatusOK, "index", IndexTplArgs{results})
+}
+
+type IndexTplArgs struct {
+	SearchResults *SearchResults
+}
+
+type SearchResults struct {
+	Query  string
+	Prices map[string]*scraping.BookPrice
+	Errors map[string]error
+
+	mu sync.Mutex
+}
+
+// NewSearchResults constructor.
+func NewSearchResults(query string) *SearchResults {
+	return &SearchResults{
+		Query:  query,
+		Prices: make(map[string]*scraping.BookPrice),
+		Errors: make(map[string]error),
+	}
+}
+
+// AddPrice to results concurrently.
+func (r *SearchResults) AddPrice(source string, price *scraping.BookPrice) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.Prices[source] = price
+}
+
+// AddError to results concurrently.
+func (r *SearchResults) AddError(source string, err error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.Errors[source] = err
 }

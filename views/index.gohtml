@@ -1,9 +1,11 @@
 {{define "index"}}
+  {{- /*gotype: github.com/flexicon/bookscale.IndexTplArgs*/ -}}
   <!DOCTYPE html>
   <html lang="en">
     <head>
       {{template "head" .}}
-      <title>Bookscale</title>
+
+      <title>{{if .SearchResults}}{{.SearchResults.Query}} - {{end}}BookScale</title>
     </head>
     <body>
       {{template "header" .}}
@@ -22,8 +24,8 @@
                 <input
                         type="text"
                         class="form-control"
-                        id="term"
-                        name="term"
+                        id="q"
+                        name="q"
                         aria-describedby="termHelp"
                         placeholder="e.g. Kasacja Remigiusz Mróz"
                 />
@@ -35,6 +37,32 @@
             </form>
           </div>
         </div>
+
+        {{if .SearchResults}}
+          <div class="container py-2 my-2">
+            <h1 class="display-6 fw-bold">Results: '{{.SearchResults.Query}}'</h1>
+
+            <ul>
+              {{range $source, $price := .SearchResults.Prices}}
+                <li>
+                  <a href="{{$price.URL}}" target="_blank" rel="noopener noreferrer">
+                    {{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}
+                  </a>
+                </li>
+              {{end}}
+            </ul>
+
+            {{if .SearchResults.Errors}}
+              <p>Errors</p>
+
+              <ul>
+                {{range $err := .SearchResults.Errors}}
+                  <li>{{$err}}</li>
+                {{end}}
+              </ul>
+            {{end}}
+          </div>
+        {{end}}
       </main>
     </body>
   </html>
