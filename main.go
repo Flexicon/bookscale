@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/spf13/viper"
 	"log"
 	"strings"
 
 	"github.com/flexicon/bookscale/views"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/spf13/viper"
 )
 
 func main() {

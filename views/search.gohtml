@@ -15,7 +15,11 @@
 
           <ul>
             {{range $source, $price := .Prices}}
-              <li>{{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}</li>
+              <li>
+                <a href="{{$price.URL}}" target="_blank" rel="noopener noreferrer">
+                  {{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}
+                </a>
+              </li>
             {{end}}
           </ul>
 

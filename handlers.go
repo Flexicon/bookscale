@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/flexicon/bookscale/scraping"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"sync"
+
+	"github.com/flexicon/bookscale/scraping"
+	"github.com/labstack/echo/v4"
 )
 
 func IndexHandler(c echo.Context) error {
@@ -64,5 +65,6 @@ func SearchHandler(c echo.Context) error {
 
 	wg.Wait()
 
+	// TODO: reuse the index template for displaying search results along with the search form maybe? For easier navigation.
 	return c.Render(http.StatusOK, "search", results)
 }

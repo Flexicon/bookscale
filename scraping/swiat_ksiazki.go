@@ -1,10 +1,12 @@
 package scraping
 
 import (
-	"github.com/gocolly/colly"
-	"github.com/pkg/errors"
+	"fmt"
 	"log"
 	"sync"
+
+	"github.com/gocolly/colly"
+	"github.com/pkg/errors"
 )
 
 type SwiatKsiazkiScraper struct {
@@ -26,8 +28,7 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 
 	c.OnError(func(res *colly.Response, err error) {
 		wg.Done()
-		log.Println("something went wrong:", err)
-		log.Printf("%s", res.Body)
+		log.Println(fmt.Sprintf("failed to scrape swiat_ksiazki for '%s':", query), err)
 	})
 
 	c.OnHTML(".product-items > .product-item:first-of-type", func(e *colly.HTMLElement) {
@@ -35,13 +36,14 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		link, _ := linkEl.Attr("href")
 
 		price := e.DOM.Find(".price-box .special-price").Text()
+		// Fallback for when a product item isn't on sale and therefore doesn't have a "special-price".
 		if price == "" {
 			price = e.DOM.Find(".price-box").Text()
 		}
 
 		result = &BookPrice{
 			Title: linkEl.Text(),
-			Price: price,
+			Price: parsePrice(price),
 			URL:   link,
 		}
 	})
@@ -58,5 +60,8 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 
 	wg.Wait()
 
+	if result == nil {
+		return nil, ErrNoResult
+	}
 	return result, nil
 }
