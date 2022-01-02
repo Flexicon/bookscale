@@ -19,18 +19,12 @@
 
 <style>
   /* Hide site content while loading font-awesome icons */
-  body {
-    display: none;
+  body > * {
+    opacity: 0;
   }
 
-  .fontawesome-i2svg-active body {
-    display: initial;
+  .fontawesome-i2svg-active body > * {
+    opacity: 1;
   }
 </style>
-
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    console.log('dom content loaded...');
-  });
-</script>
 {{end}}

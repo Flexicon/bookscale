@@ -19,7 +19,7 @@
               your book at the best price possible, and don't get scammed on pricing ever again!
             </p>
 
-            <form action="/search" method="get">
+            <form action="/search#search-results" method="get">
               <div class="input-group mb-2">
                 <input
                         type="text"
@@ -42,7 +42,7 @@
           {{$prices := .SearchResults.Prices}}
           {{$errs := .SearchResults.Errors}}
           <div class="container py-2 my-2">
-            <h1 class="display-6 fw-bold">Results: '{{.SearchResults.Query}}'</h1>
+            <h1 id="search-results" class="display-6 fw-bold">Results: '{{.SearchResults.Query}}'</h1>
 
             <ul>
               {{range $source := .Sources}}
