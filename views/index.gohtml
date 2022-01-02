@@ -39,28 +39,28 @@
         </div>
 
         {{if .SearchResults}}
+          {{$prices := .SearchResults.Prices}}
+          {{$errs := .SearchResults.Errors}}
           <div class="container py-2 my-2">
             <h1 class="display-6 fw-bold">Results: '{{.SearchResults.Query}}'</h1>
 
             <ul>
-              {{range $source, $price := .SearchResults.Prices}}
+              {{range $source := .Sources}}
+                {{$price := index $prices $source}}
+                {{$err := index $errs $source}}
                 <li>
-                  <a href="{{$price.URL}}" target="_blank" rel="noopener noreferrer">
-                    {{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}
-                  </a>
+                  {{if $price}}
+                    <a href="{{$price.URL}}" target="_blank" rel="noopener noreferrer">
+                      {{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}
+                    </a>
+                  {{end}}
+
+                  {{if $err}}
+                    {{$source}} - {{$err}}
+                  {{end}}
                 </li>
               {{end}}
             </ul>
-
-            {{if .SearchResults.Errors}}
-              <p>Errors</p>
-
-              <ul>
-                {{range $err := .SearchResults.Errors}}
-                  <li>{{$err}}</li>
-                {{end}}
-              </ul>
-            {{end}}
           </div>
         {{end}}
       </main>

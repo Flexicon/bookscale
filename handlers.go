@@ -9,10 +9,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// IndexHandler route handler.
 func IndexHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "index", IndexTplArgs{})
 }
 
+// SearchHandler route handler.
 func SearchHandler(c echo.Context) error {
 	query := strings.TrimSpace(c.QueryParam("q"))
 	results := NewSearchResults(query)
@@ -39,13 +41,19 @@ func SearchHandler(c echo.Context) error {
 
 	wg.Wait()
 
-	return c.Render(http.StatusOK, "index", IndexTplArgs{results})
+	return c.Render(http.StatusOK, "index", IndexTplArgs{
+		Sources:       scraping.Sources(),
+		SearchResults: results,
+	})
 }
 
+// IndexTplArgs represents the arguments that are passed to the index template.
 type IndexTplArgs struct {
+	Sources       []string
 	SearchResults *SearchResults
 }
 
+// SearchResults holds scraping results and handles adding them concurrently.
 type SearchResults struct {
 	Query  string
 	Prices map[string]*scraping.BookPrice

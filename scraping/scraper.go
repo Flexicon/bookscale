@@ -2,6 +2,7 @@ package scraping
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -27,6 +28,17 @@ type BookPrice struct {
 // PriceScraper allows scraping prices by query.
 type PriceScraper interface {
 	Price(query string) (*BookPrice, error)
+}
+
+// Sources returns a sorted slice of all available scraping source keys.
+func Sources() []string {
+	var keys []string
+	for key, _ := range PriceScrapers {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	return keys
 }
 
 // parsePrice reads and formats a given price in PLN (zł) from the given input string.
