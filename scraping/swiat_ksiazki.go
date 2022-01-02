@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/gocolly/colly"
-	"github.com/pkg/errors"
 )
 
 type SwiatKsiazkiScraper struct {
@@ -57,11 +56,7 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		log.Println("finished scraping:", r.Request.URL)
 	})
 
-	scrapeURL := s.buildPriceScrapingURL(query)
-	if err := c.Visit(scrapeURL); err != nil {
-		return nil, errors.Wrap(err, "failed to scrape price")
-	}
-
+	_ = c.Visit(s.buildPriceScrapingURL(query))
 	wg.Wait()
 
 	if result == nil {
