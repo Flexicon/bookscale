@@ -17,7 +17,7 @@ func IndexHandler(c echo.Context) error {
 // SearchHandler route handler.
 func SearchHandler(c echo.Context) error {
 	query := strings.TrimSpace(c.QueryParam("q"))
-	results := NewSearchResults(query)
+	results := NewSearchResults()
 
 	if query == "" {
 		return c.Redirect(http.StatusFound, "/")
@@ -42,6 +42,7 @@ func SearchHandler(c echo.Context) error {
 	wg.Wait()
 
 	return c.Render(http.StatusOK, "index", IndexTplArgs{
+		Query:         query,
 		Sources:       scraping.Sources(),
 		SearchResults: results,
 	})
@@ -50,12 +51,12 @@ func SearchHandler(c echo.Context) error {
 // IndexTplArgs represents the arguments that are passed to the index template.
 type IndexTplArgs struct {
 	Sources       []string
+	Query         string
 	SearchResults *SearchResults
 }
 
 // SearchResults holds scraping results and handles adding them concurrently.
 type SearchResults struct {
-	Query  string
 	Prices map[string]*scraping.BookPrice
 	Errors map[string]error
 
@@ -63,9 +64,8 @@ type SearchResults struct {
 }
 
 // NewSearchResults constructor.
-func NewSearchResults(query string) *SearchResults {
+func NewSearchResults() *SearchResults {
 	return &SearchResults{
-		Query:  query,
 		Prices: make(map[string]*scraping.BookPrice),
 		Errors: make(map[string]error),
 	}
