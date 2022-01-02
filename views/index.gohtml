@@ -45,23 +45,45 @@
           <div class="container py-2 my-2">
             <h1 id="search-results" class="display-6 fw-bold">Results: '{{.Query}}'</h1>
 
-            <ul>
+            <div class="row mt-4 mb-5">
               {{range $source := .Sources}}
                 {{$price := index $prices $source}}
                 {{$err := index $errs $source}}
-                <li>
-                  {{if $price}}
-                    <a href="{{$price.URL}}" target="_blank" rel="noopener noreferrer">
-                      {{$source}} - {{$price.Title}} - {{$price.Price}} - {{$price.URL}}
-                    </a>
-                  {{end}}
 
-                  {{if $err}}
-                    {{$source}} - {{$err}}
-                  {{end}}
-                </li>
+                <div class="col-12 col-md-4 mb-3">
+                  <article class="card price-item">
+                    <div class="card-body">
+                      <div class="ms-2 float-end">
+                        <img class="mb-2"
+                             src="/img/{{$source}}.png"
+                             alt="{{$source}}"
+                             style="width: 4.7rem; aspect-ratio: 22 / 8">
+                        {{if $price}}<p class="text-end">{{$price.Price}}</p>{{end}}
+                      </div>
+
+                      <div class="mb-4" style="min-height: 6rem">
+                        {{if $price}}<h5 class="card-title">{{$price.Title}}</h5>{{end}}
+                        {{if $err}}
+                            <pre>{{$err}}</pre>
+                        {{end}}
+                      </div>
+
+                      {{if $price}}
+                        <a href="{{$price.URL}}" class="btn btn-primary btn-sm" rel="noreferrer noopener" target="_blank">
+                          <i class="fas fa-shopping-cart me-1"></i>
+                          <span>Buy now</span>
+                        </a>
+                      {{else}}
+                        <button class="btn btn-primary btn-sm" disabled>
+                          <i class="fas fa-shopping-cart me-1"></i>
+                          <span>Buy now</span>
+                        </button>
+                      {{end}}
+                    </div>
+                  </article>
+                </div>
               {{end}}
-            </ul>
+            </div>
           </div>
         {{end}}
       </main>
