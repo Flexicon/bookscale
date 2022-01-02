@@ -31,9 +31,7 @@ func run() error {
 	}))
 
 	e.Renderer = views.NewRenderer()
-
-	e.GET("/", IndexHandler)
-	e.GET("/search", SearchHandler)
+	SetupRoutes(e)
 
 	return e.Start(":9000")
 }

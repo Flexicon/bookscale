@@ -9,6 +9,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// SetupRoutes for the app.
+func SetupRoutes(e *echo.Echo) {
+	e.GET("/", IndexHandler)
+	e.GET("/search", SearchHandler)
+
+	e.Static("", "./static")
+}
+
 // IndexHandler route handler.
 func IndexHandler(c echo.Context) error {
 	return c.Render(http.StatusOK, "index", IndexTplArgs{})
