@@ -19,7 +19,7 @@
               your book at the best price possible, and don't get scammed on pricing ever again!
             </p>
 
-            <form action="/search#search-results" method="get">
+            <form id="search-form" action="/search#search-results" method="get">
               <div class="input-group mb-2">
                 <input
                         type="text"
@@ -64,6 +64,17 @@
           </div>
         {{end}}
       </main>
+
+      <script>
+        const searchForm = document.getElementById('search-form')
+
+        searchForm.addEventListener('submit', function (e) {
+          setTimeout(function () {
+              document.getElementById('q').setAttribute('disabled', 'true')
+              document.querySelector('#search-form button[type=submit]').setAttribute('disabled', 'true')
+          }, 50)
+        })
+      </script>
     </body>
   </html>
 {{end}}
