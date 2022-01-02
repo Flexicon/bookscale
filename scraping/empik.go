@@ -3,6 +3,7 @@ package scraping
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -58,7 +59,7 @@ func (s *EmpikScraper) Price(query string) (*BookPrice, error) {
 		log.Println("finished scraping:", r.Request.URL)
 	})
 
-	scrapeURL := s.domain() + "/ksiazki,31,s?qtype=basicForm&q=" + query
+	scrapeURL := s.buildPriceScrapingURL(query)
 	if err := c.Visit(scrapeURL); err != nil {
 		return nil, errors.Wrap(err, "failed to scrape price")
 	}
@@ -73,4 +74,15 @@ func (s *EmpikScraper) Price(query string) (*BookPrice, error) {
 
 func (s *EmpikScraper) domain() string {
 	return "https://www.empik.com"
+}
+
+func (s *EmpikScraper) buildPriceScrapingURL(query string) string {
+	q := url.Values{}
+	q.Add("qtype", "basicForm")
+	q.Add("q", query)
+
+	scrapeURL, _ := url.Parse(fmt.Sprintf("%s/ksiazki,31,s", s.domain()))
+	scrapeURL.RawQuery = q.Encode()
+
+	return scrapeURL.String()
 }

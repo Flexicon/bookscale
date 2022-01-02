@@ -3,6 +3,7 @@ package scraping
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"sync"
 
 	"github.com/gocolly/colly"
@@ -56,7 +57,7 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		log.Println("finished scraping:", r.Request.URL)
 	})
 
-	scrapeURL := "https://www.swiatksiazki.pl/catalogsearch/result?cat=4&q=" + query
+	scrapeURL := s.buildPriceScrapingURL(query)
 	if err := c.Visit(scrapeURL); err != nil {
 		return nil, errors.Wrap(err, "failed to scrape price")
 	}
@@ -67,4 +68,15 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		return nil, ErrNoResult
 	}
 	return result, nil
+}
+
+func (s *SwiatKsiazkiScraper) buildPriceScrapingURL(query string) string {
+	q := url.Values{}
+	q.Add("cat", "4")
+	q.Add("q", query)
+
+	scrapeURL, _ := url.Parse("https://www.swiatksiazki.pl/catalogsearch/result")
+	scrapeURL.RawQuery = q.Encode()
+
+	return scrapeURL.String()
 }
