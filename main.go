@@ -21,6 +21,10 @@ func run() error {
 		return err
 	}
 
+	if err := InitCache(); err != nil {
+		return err
+	}
+
 	e := echo.New()
 	e.Debug = viper.GetBool("debug")
 

@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
 
 	"github.com/flexicon/bookscale/scraping"
 	"github.com/labstack/echo/v4"
+	"github.com/patrickmn/go-cache"
 )
 
 // SetupRoutes for the app.
@@ -38,11 +41,21 @@ func SearchHandler(c echo.Context) error {
 		go func(source string, scraper scraping.PriceScraper) {
 			defer wg.Done()
 
+			cacheKey := fmt.Sprintf("%s - %s", source, query)
+			cachedPrice, hit := PriceCache.Get(cacheKey)
+			if hit {
+				log.Printf("cache hit: %+v", cacheKey)
+				results.AddPrice(source, cachedPrice.(*scraping.BookPrice))
+				return
+			}
+
 			price, err := scraper.Price(query)
 			if err != nil {
 				results.AddError(source, err)
 				return
 			}
+
+			PriceCache.Set(cacheKey, price, cache.DefaultExpiration)
 			results.AddPrice(source, price)
 		}(source, scraper)
 	}
