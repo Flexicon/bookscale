@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -37,7 +38,7 @@ func run() error {
 	e.Renderer = views.NewRenderer()
 	SetupRoutes(e)
 
-	return e.Start(":9000")
+	return e.Start(fmt.Sprintf(":%d", viper.GetInt("port")))
 }
 
 // ViperInit loads environment variables and sets up needed defaults.
