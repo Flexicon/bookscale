@@ -7,11 +7,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pkg/errors"
-
 	"github.com/flexicon/bookscale/scraping"
 	"github.com/labstack/echo/v4"
-	"github.com/patrickmn/go-cache"
+	"github.com/pkg/errors"
 )
 
 // SetupRoutes for the app.
@@ -44,7 +42,7 @@ func SearchHandler(c echo.Context) error {
 			defer wg.Done()
 
 			cacheKey := fmt.Sprintf("%s - %s", source, query)
-			cachedPrice, hit := PriceCache.Get(cacheKey)
+			cachedPrice, hit := priceCache.Get(cacheKey)
 			if hit {
 				log.Printf("cache hit: %+v", cacheKey)
 				results.AddCached(source, cachedPrice)
@@ -55,13 +53,13 @@ func SearchHandler(c echo.Context) error {
 			if err != nil {
 				if errors.Is(err, scraping.ErrNoResult) {
 					// Only cache ErrNoResult to avoid scraper spam
-					PriceCache.Set(cacheKey, err, cache.DefaultExpiration)
+					priceCache.Set(cacheKey, err)
 				}
 				results.AddError(source, err)
 				return
 			}
 
-			PriceCache.Set(cacheKey, price, cache.DefaultExpiration)
+			priceCache.Set(cacheKey, price)
 			results.AddPrice(source, price)
 		}(source, scraper)
 	}
