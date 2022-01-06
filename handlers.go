@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/flexicon/bookscale/scraping"
 	"github.com/labstack/echo/v4"
-	"github.com/pkg/errors"
 )
 
 // SetupRoutes for the app.
@@ -51,8 +51,8 @@ func SearchHandler(c echo.Context) error {
 
 			price, err := scraper.Price(query)
 			if err != nil {
+				// Only cache ErrNoResult to avoid scraper spam
 				if errors.Is(err, scraping.ErrNoResult) {
-					// Only cache ErrNoResult to avoid scraper spam
 					priceCache.Set(cacheKey, err)
 				}
 				results.AddError(source, err)
