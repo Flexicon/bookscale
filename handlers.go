@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	"github.com/flexicon/bookscale/scraping"
 	"github.com/labstack/echo/v4"
 	"github.com/patrickmn/go-cache"
@@ -45,12 +47,16 @@ func SearchHandler(c echo.Context) error {
 			cachedPrice, hit := PriceCache.Get(cacheKey)
 			if hit {
 				log.Printf("cache hit: %+v", cacheKey)
-				results.AddPrice(source, cachedPrice.(*scraping.BookPrice))
+				results.AddCached(source, cachedPrice)
 				return
 			}
 
 			price, err := scraper.Price(query)
 			if err != nil {
+				if errors.Is(err, scraping.ErrNoResult) {
+					// Only cache ErrNoResult to avoid scraper spam
+					PriceCache.Set(cacheKey, err, cache.DefaultExpiration)
+				}
 				results.AddError(source, err)
 				return
 			}
@@ -106,4 +112,16 @@ func (r *SearchResults) AddError(source string, err error) {
 	defer r.mu.Unlock()
 
 	r.Errors[source] = err
+}
+
+// AddCached value to result concurrently.
+func (r *SearchResults) AddCached(source string, val interface{}) {
+	switch v := val.(type) {
+	case *scraping.BookPrice:
+		r.AddPrice(source, v)
+	case error:
+		r.AddError(source, v)
+	default:
+		r.AddError(source, scraping.ErrNoResult)
+	}
 }
