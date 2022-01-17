@@ -70,6 +70,7 @@ func SearchHandler(c echo.Context) error {
 		Query:         query,
 		Sources:       scraping.Sources(),
 		SearchResults: results,
+		NoCoverURL:    scraping.NoCoverURL,
 	})
 }
 
@@ -78,6 +79,7 @@ type IndexTplArgs struct {
 	Sources       []string
 	Query         string
 	SearchResults *SearchResults
+	NoCoverURL    string
 }
 
 // SearchResults holds scraping results and handles adding them concurrently.

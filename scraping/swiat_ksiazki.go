@@ -44,10 +44,15 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 			price = "N/A"
 		}
 
+		coverEl := e.DOM.Find("img.product-image-photo")
+		coverURL := coverEl.AttrOr("data-src", NoCoverURL)
+
 		result = &BookPrice{
-			Title: linkEl.Text(),
-			Price: parsePrice(price),
-			URL:   link,
+			Title:    linkEl.Text(),
+			Price:    parsePrice(price),
+			URL:      link,
+			CoverURL: coverURL,
+			//CoverURL: "https://www.empik.com/b/mp/img/svg/no_picture.svg",
 		}
 	})
 

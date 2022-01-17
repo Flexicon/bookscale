@@ -8,6 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	// NoCoverURL used for when no cover was found for a scraped book.
+	NoCoverURL = "/img/no_cover.svg"
+)
+
 // ErrNoResult is returned by Scrapers if no data is found during scraping.
 var ErrNoResult = errors.New("no result")
 
@@ -20,9 +25,10 @@ var PriceScrapers = map[string]PriceScraper{
 
 // BookPrice represents a scraped price item.
 type BookPrice struct {
-	Title string
-	Price string
-	URL   string
+	Title    string
+	Price    string
+	URL      string
+	CoverURL string
 }
 
 // PriceScraper allows scraping prices by query.

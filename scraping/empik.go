@@ -40,16 +40,20 @@ func (s *EmpikScraper) Price(query string) (*BookPrice, error) {
 			price = "N/A"
 		}
 
-		link, _ := linkEl.Attr("href")
+		link := linkEl.AttrOr("href", "")
 		// Handle relative URLs by attaching the Empik domain onto the link.
 		if strings.Index(link, s.domain()) != 0 {
 			link = s.domain() + link
 		}
 
+		coverEl := e.DOM.Find("a.img > img")
+		coverURL := coverEl.AttrOr("lazy-img", NoCoverURL)
+
 		result = &BookPrice{
-			Title: linkEl.Text(),
-			Price: price,
-			URL:   link,
+			Title:    linkEl.Text(),
+			Price:    price,
+			URL:      link,
+			CoverURL: coverURL,
 		}
 	})
 
