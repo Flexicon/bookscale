@@ -50,6 +50,7 @@ func ViperInit() error {
 	// Defaults
 	viper.SetDefault("port", 80)
 	viper.SetDefault("debug", false)
+	viper.SetDefault("cache.ttl", 900) // In seconds
 	viper.SetDefault("allegro.client_id", "")
 	viper.SetDefault("allegro.client_secret", "")
 

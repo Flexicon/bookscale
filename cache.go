@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"github.com/spf13/viper"
 )
 
 // Cache wrapper.
@@ -26,6 +27,7 @@ var priceCache *Cache
 
 // InitCache sets up the app cache.
 func InitCache() error {
-	priceCache = &Cache{cache.New(15*time.Minute, 10*time.Minute)}
+	cacheTTL := time.Duration(viper.GetInt64("cache.ttl")) * time.Second
+	priceCache = &Cache{cache.New(cacheTTL, 10*time.Minute)}
 	return nil
 }
