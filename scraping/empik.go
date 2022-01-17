@@ -49,8 +49,14 @@ func (s *EmpikScraper) Price(query string) (*BookPrice, error) {
 		coverEl := e.DOM.Find("a.img > img")
 		coverURL := coverEl.AttrOr("lazy-img", NoCoverURL)
 
+		author := strings.TrimSpace(e.DOM.Find(".smartAuthor").Text())
+		if author == "" {
+			author = "-"
+		}
+
 		result = &BookPrice{
 			Title:    linkEl.Text(),
+			Author:   author,
 			Price:    price,
 			URL:      link,
 			CoverURL: coverURL,

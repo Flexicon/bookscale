@@ -26,6 +26,7 @@ var PriceScrapers = map[string]PriceScraper{
 // BookPrice represents a scraped price item.
 type BookPrice struct {
 	Title    string
+	Author   string
 	Price    string
 	URL      string
 	CoverURL string
@@ -39,7 +40,7 @@ type PriceScraper interface {
 // Sources returns a sorted slice of all available scraping source keys.
 func Sources() []string {
 	var keys []string
-	for key, _ := range PriceScrapers {
+	for key := range PriceScrapers {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

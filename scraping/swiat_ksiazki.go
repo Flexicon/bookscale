@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/gocolly/colly"
@@ -33,12 +34,12 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 
 	c.OnHTML(".product-items > .product-item:first-of-type", func(e *colly.HTMLElement) {
 		linkEl := e.DOM.Find("a.product-item-link")
-		link, _ := linkEl.Attr("href")
+		link := linkEl.AttrOr("href", "")
 
-		price := e.DOM.Find(".price-box .special-price").Text()
+		price := parsePrice(strings.TrimSpace(e.DOM.Find(".price-box .special-price").Text()))
 		// Fallback for when a product item isn't on sale and therefore doesn't have a "special-price".
 		if price == "" {
-			price = e.DOM.Find(".price-box").Text()
+			price = parsePrice(e.DOM.Find(".price-box").Text())
 		}
 		if price == "" {
 			price = "N/A"
@@ -47,12 +48,17 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		coverEl := e.DOM.Find("img.product-image-photo")
 		coverURL := coverEl.AttrOr("data-src", NoCoverURL)
 
+		author := strings.TrimSpace(e.DOM.Find(".product-item-author").Text())
+		if author == "" {
+			author = "-"
+		}
+
 		result = &BookPrice{
 			Title:    linkEl.Text(),
-			Price:    parsePrice(price),
+			Author:   author,
+			Price:    price,
 			URL:      link,
 			CoverURL: coverURL,
-			//CoverURL: "https://www.empik.com/b/mp/img/svg/no_picture.svg",
 		}
 	})
 
