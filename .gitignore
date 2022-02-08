@@ -5,3 +5,4 @@
 # Dev files
 tmp/
 .air.toml
+config.yml

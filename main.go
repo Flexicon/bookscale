@@ -8,6 +8,7 @@ import (
 	"github.com/flexicon/bookscale/views"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
@@ -53,6 +54,16 @@ func ViperInit() error {
 	viper.SetDefault("cache.ttl", 900) // In seconds
 	viper.SetDefault("allegro.client_id", "")
 	viper.SetDefault("allegro.client_secret", "")
+
+	// Read optional config.yml file
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return errors.Wrap(err, "failed to read existing viper config file")
+		}
+	}
 
 	return nil
 }
