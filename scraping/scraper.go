@@ -21,6 +21,7 @@ var PriceScrapers = map[string]PriceScraper{
 	//"allegro": NewAllegroScraper(), // TODO: re-enable after implementing work around properly
 	"swiat_ksiazki": NewSwiatKsiazkiScraper(),
 	"empik":         NewEmpikScraper(),
+	"tania_ksiazka": NewTaniaKsiazkaScraper(),
 }
 
 // BookPrice represents a scraped price item.
