@@ -47,7 +47,7 @@ func (s *TaniaKsiazkaScraper) Price(query string) (*BookPrice, error) {
 		}
 
 		coverEl := e.DOM.Find(".product-image img")
-		coverURL := coverEl.AttrOr("data-src", NoCoverURL)
+		coverURL := coverEl.AttrOr("data-src", NoCoverURL())
 
 		author := strings.TrimSpace(e.DOM.Find(".product-authors").Text())
 		if author == "" {

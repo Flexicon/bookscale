@@ -6,11 +6,12 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 const (
-	// NoCoverURL used for when no cover was found for a scraped book.
-	NoCoverURL = "/img/no_cover.svg"
+	// noCoverImage used for when no cover was found for a scraped book.
+	noCoverImage = "/no_cover.svg"
 )
 
 // ErrNoResult is returned by Scrapers if no data is found during scraping.
@@ -60,4 +61,9 @@ func parsePrice(input string) string {
 	}
 
 	return fmt.Sprintf("%s zł", strings.TrimSpace(parts[0]))
+}
+
+// NoCoverURL used for when no cover was found for a scraped book.
+func NoCoverURL() string {
+	return viper.GetString("static_asset_base_url") + noCoverImage
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/flexicon/bookscale/scraping"
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 )
 
 // SetupRoutes for the app.
@@ -70,7 +71,8 @@ func SearchHandler(c echo.Context) error {
 		Query:         query,
 		Sources:       scraping.Sources(),
 		SearchResults: results,
-		NoCoverURL:    scraping.NoCoverURL,
+		NoCoverURL:    scraping.NoCoverURL(),
+		BaseImageURL:  viper.GetString("static_asset_base_url"),
 	})
 }
 
@@ -80,6 +82,7 @@ type IndexTplArgs struct {
 	Query         string
 	SearchResults *SearchResults
 	NoCoverURL    string
+	BaseImageURL  string
 }
 
 // SearchResults holds scraping results and handles adding them concurrently.
