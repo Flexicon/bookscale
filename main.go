@@ -52,7 +52,7 @@ func ViperInit() error {
 	viper.SetDefault("port", 80)
 	viper.SetDefault("debug", false)
 	viper.SetDefault("cache.ttl", 900) // In seconds
-	viper.SetDefault("static_asset_base_url", "https://res.cloudinary.com/flexicondev/image/upload/v1646583872/bookscale/")
+	viper.SetDefault("static_asset_base_url", "https://res.cloudinary.com/flexicondev/image/upload/q_60/v1646583872/bookscale/")
 	viper.SetDefault("allegro.client_id", "")
 	viper.SetDefault("allegro.client_secret", "")
 
