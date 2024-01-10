@@ -28,7 +28,7 @@ func IndexHandler(c echo.Context) error {
 
 // SearchHandler route handler.
 func SearchHandler(c echo.Context) error {
-	query := strings.TrimSpace(c.QueryParam("q"))
+	query := strings.ToLower(strings.TrimSpace(c.QueryParam("q")))
 	results := NewSearchResults()
 
 	if query == "" {
