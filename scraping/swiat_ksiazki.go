@@ -31,7 +31,7 @@ func (s *SwiatKsiazkiScraper) Price(query string) (*BookPrice, error) {
 		return nil, err
 	}
 
-	return s.mapGraphqlItemToPrice(item), nil
+	return s.mapItemToPrice(item), nil
 }
 
 func (s *SwiatKsiazkiScraper) buildQueryURL(query string) string {
@@ -83,14 +83,12 @@ type swiatKsiazkiGraphQLItem struct {
 }
 
 func (s *SwiatKsiazkiScraper) queryItemFromAPI(query string) (*swiatKsiazkiGraphQLItem, error) {
-	queryURL := s.buildQueryURL(query)
-	log.Println("visiting", queryURL)
-
-	req, err := http.NewRequest("GET", queryURL, nil)
+	req, err := http.NewRequest("GET", s.buildQueryURL(query), nil)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Println("visiting", req.URL.String())
 	res, err := s.http.Do(req)
 	if err != nil {
 		return nil, err
@@ -104,12 +102,12 @@ func (s *SwiatKsiazkiScraper) queryItemFromAPI(query string) (*swiatKsiazkiGraph
 	if response.Data.Products.TotalCount < 1 || len(response.Data.Products.Items) == 0 {
 		return nil, ErrNoResult
 	}
-	log.Println("finished scraping:", queryURL)
+	log.Println("finished scraping:", req.URL.String())
 
 	return &response.Data.Products.Items[0], nil
 }
 
-func (s *SwiatKsiazkiScraper) mapGraphqlItemToPrice(item *swiatKsiazkiGraphQLItem) *BookPrice {
+func (s *SwiatKsiazkiScraper) mapItemToPrice(item *swiatKsiazkiGraphQLItem) *BookPrice {
 	author := "-"
 	if len(item.Dictionary.Authors) != 0 {
 		author = item.Dictionary.Authors[0].Name
