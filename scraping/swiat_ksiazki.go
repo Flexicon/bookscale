@@ -60,6 +60,7 @@ type swiatKsiazkiGraphQLResponse struct {
 
 type swiatKsiazkiGraphQLItem struct {
 	Name      string `json:"name"`
+	URL       string `json:"url"`
 	StockItem struct {
 		InStock bool `json:"in_stock"`
 	} `json:"stock_item"`
@@ -118,7 +119,7 @@ func (s *SwiatKsiazkiScraper) mapGraphqlItemToPrice(item *swiatKsiazkiGraphQLIte
 		Title:    item.Name,
 		Author:   author,
 		Price:    fmt.Sprintf("%.2f zł", item.PriceRange.MinimumPrice.FinalPrice.Value),
-		URL:      "-",
+		URL:      fmt.Sprintf("https://www.swiatksiazki.pl%s", item.URL),
 		CoverURL: item.SmallImage.URL,
 	}
 }
