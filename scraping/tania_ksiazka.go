@@ -32,7 +32,7 @@ func (s *TaniaKsiazkaScraper) Price(query string) (*BookPrice, error) {
 		log.Println(fmt.Sprintf("failed to scrape tania_ksiazka for '%s':", query), err)
 	})
 
-	c.OnHTML("article ul > li:first-of-type", func(e *colly.HTMLElement) {
+	c.OnHTML("article ul > li:first-of-type:not(.active)", func(e *colly.HTMLElement) {
 		linkEl := e.DOM.Find("a.product-title")
 
 		price := parsePrice(e.DOM.Find(".product-price").Text())
